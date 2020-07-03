@@ -1,7 +1,9 @@
 #![feature(proc_macro_hygiene, decl_macro)]
-
 #[macro_use] extern crate rocket;
 
+mod utils;
+
+use rocket::response::Redirect;
 
 
 
@@ -11,9 +13,18 @@ fn index() -> &'static str {
 }
 
 
-#[get("/search")]
-fn search() -> &'static str {
-    "Hello from the search page!"
+#[get("/search?<cmd>")]
+fn search(cmd: String) -> Redirect {
+    println!("You typed in: {}", cmd);
+
+    let command = utils::command_from_query(&cmd);
+
+    let redirect_url = match command.as_ref() {
+        "gh" => String::from("https://github.com"),
+        _ => utils::google::to_google_search_url(&cmd)
+    };
+
+    Redirect::to(redirect_url)
 }
 
 
