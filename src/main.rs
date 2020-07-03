@@ -20,7 +20,7 @@ fn search(cmd: String) -> Redirect {
     let command = utils::command_from_query(&cmd);
 
     let redirect_url = match command.as_ref() {
-        "gh" => String::from("https://github.com"),
+        "tw" => utils::twitter::to_twitter_url(&cmd),
         _ => utils::google::to_google_search_url(&cmd)
     };
 
