@@ -1,20 +1,5 @@
-extern crate percent_encoding;
-
-
-use percent_encoding::{utf8_percent_encode as encode, AsciiSet, CONTROLS};
-
-
-// What characters to encode
-const CHARACTERS: &AsciiSet = &CONTROLS
-    .add(b' ')
-    .add(b'"')
-    .add(b'<')
-    .add(b'>')
-    .add(b'/');
-
-
 pub fn to_google_search_url(query: &str) -> String {
-    let encoded = encode(query, CHARACTERS).to_string();
+    let encoded = crate::encoder::encode(query);
     let search_url = format!("https://google.com/search?q={}", encoded);
 
     search_url

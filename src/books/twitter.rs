@@ -1,20 +1,3 @@
-extern crate percent_encoding;
-
-
-use percent_encoding::{utf8_percent_encode as encode, AsciiSet, CONTROLS};
-
-
-// What characters to encode
-const CHARACTERS: &AsciiSet = &CONTROLS
-    .add(b' ')
-    .add(b'"')
-    .add(b'<')
-    .add(b'>')
-    .add(b'/');
-
-
-
-
 pub fn to_twitter_url(query: &str) -> String {
     if query == "tw" {
         let url = "https://twitter.com";
@@ -34,7 +17,7 @@ fn to_twitter_profile_url(profile: &str) -> String {
 
 
 fn to_twitter_search_url(query: &str) -> String {
-    let encoded = encode(query, CHARACTERS).to_string();
+    let encoded = crate::encoder::encode(query);
     let search_url = format!("https://twitter.com/search?q={}", encoded);
 
     search_url

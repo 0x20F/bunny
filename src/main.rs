@@ -1,7 +1,8 @@
 #![feature(proc_macro_hygiene, decl_macro)]
 #[macro_use] extern crate rocket;
 
-mod utils;
+mod books;
+mod encoder;
 
 use rocket::response::Redirect;
 
@@ -9,22 +10,13 @@ use rocket::response::Redirect;
 
 #[get("/")]
 fn index() -> &'static str {
-    "Hello, world!"
+    "Nothing fancy at the root yo, shoooo"
 }
 
 
 #[get("/search?<cmd>")]
 fn search(cmd: String) -> Redirect {
-    println!("You typed in: {}", cmd);
-
-    let command = utils::command_from_query(&cmd);
-
-    let redirect_url = match command.as_ref() {
-        "tw" => utils::twitter::to_twitter_url(&cmd),
-        _ => utils::google::to_google_search_url(&cmd)
-    };
-
-    Redirect::to(redirect_url)
+    Redirect::to(books::open_book(&cmd))
 }
 
 
