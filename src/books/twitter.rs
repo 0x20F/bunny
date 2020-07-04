@@ -5,9 +5,7 @@ const USER_INDICATOR: char = '@';
 
 
 
-/// Decide what kind of query we've been given
-/// and build the url that should be shown
-/// based on that
+
 pub fn to_twitter_url(query: &str) -> String {
     let params = &query[ALIAS.len()..];
     let params = params.trim();
@@ -24,20 +22,21 @@ pub fn to_twitter_url(query: &str) -> String {
 }
 
 
-/// Build profile url with the given username
+
 fn to_twitter_profile_url(profile: &str) -> String {
     format!("{}/{}", TWITTER_URL, profile)
 }
 
 
-/// Encode a given query and build a URL
-/// that searches for that query
+
 fn to_twitter_search_url(query: &str) -> String {
     let encoded = crate::encoder::encode(query);
     let search_url = format!("{}/search?q={}", TWITTER_URL, encoded);
 
     search_url
 }
+
+
 
 
 
