@@ -10,6 +10,7 @@ pub fn open_book(query: &str) -> String {
     let command = command_from_query(&query);
 
     let redirect_url = match command.as_ref() {
+        github::ALIAS => github::to_github_url(&query),
         twitter::ALIAS => twitter::to_twitter_url(&query),
         _ => google::to_google_search_url(&query)
     };
