@@ -1,24 +1,40 @@
+pub const ALIAS: &str = "tw";
+
+const TWITTER_URL: &str = "https://twitter.com";
+const USER_INDICATOR: char = '@';
+
+
+
+/// Decide what kind of query we've been given
+/// and build the url that should be shown
+/// based on that
 pub fn to_twitter_url(query: &str) -> String {
-    if query == "tw" {
-        let url = "https://twitter.com";
+    let params = &query[ALIAS.len()..];
+    let params = params.trim();
 
-        url.to_string()
-    } else if &query[..4] == "tw @" {
-        to_twitter_profile_url(&query[4..])
-    } else {
-        to_twitter_search_url(&query[3..])
+    if params.is_empty() {
+        return TWITTER_URL.to_string();
     }
+
+    if params.starts_with(USER_INDICATOR) {
+        return to_twitter_profile_url(&params[1..])
+    }
+
+    to_twitter_search_url(&params)
 }
 
 
+/// Build profile url with the given username
 fn to_twitter_profile_url(profile: &str) -> String {
-    format!("https://twitter.com/{}", profile)
+    format!("{}/{}", TWITTER_URL, profile)
 }
 
 
+/// Encode a given query and build a URL
+/// that searches for that query
 fn to_twitter_search_url(query: &str) -> String {
     let encoded = crate::encoder::encode(query);
-    let search_url = format!("https://twitter.com/search?q={}", encoded);
+    let search_url = format!("{}/search?q={}", TWITTER_URL, encoded);
 
     search_url
 }
@@ -33,31 +49,31 @@ mod tests {
     #[test]
     fn test_construct_twitter_url() {
         let fake_query = "tw";
-        assert_eq!(to_twitter_url(fake_query), "https://twitter.com");
+        assert_eq!(to_twitter_url(fake_query), TWITTER_URL);
     }
 
     #[test]
     fn test_construct_twitter_url_query() {
         let fake_query = "tw hello world";
-        assert_eq!(to_twitter_url(fake_query), "https://twitter.com/search?q=hello%20world");
+        assert_eq!(to_twitter_url(fake_query), format!("{}/search?q=hello%20world", TWITTER_URL));
     }
 
     #[test]
     fn test_construct_twitter_url_profile() {
         let fake_query = "tw @water";
-        assert_eq!(to_twitter_url(fake_query), "https://twitter.com/water");
+        assert_eq!(to_twitter_url(fake_query), format!("{}/water", TWITTER_URL));
     }
 
     #[test]
     fn test_construct_twitter_profile_url() {
         let fake_profile = "abcde";
-        assert_eq!(to_twitter_profile_url(fake_profile), "https://twitter.com/abcde");
+        assert_eq!(to_twitter_profile_url(fake_profile), format!("{}/abcde", TWITTER_URL));
     }
 
     #[test]
     fn test_construct_twitter_search_url() {
         let fake_query = "hello world";
-        assert_eq!(to_twitter_search_url(fake_query), "https://twitter.com/search?q=hello%20world");
+        assert_eq!(to_twitter_search_url(fake_query), format!("{}/search?q=hello%20world", TWITTER_URL));
     }
 }
 

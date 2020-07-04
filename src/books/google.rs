@@ -1,6 +1,10 @@
+const GOOGLE_URL: &str = "https://google.com";
+
+
+
 pub fn to_google_search_url(query: &str) -> String {
     let encoded = crate::encoder::encode(query);
-    let search_url = format!("https://google.com/search?q={}", encoded);
+    let search_url = format!("{}/search?q={}", GOOGLE_URL, encoded);
 
     search_url
 }
@@ -13,12 +17,12 @@ mod tests {
     #[test]
     fn test_construct_google_search_url() {
         let fake_query = "hello";
-        assert_eq!(to_google_search_url(fake_query), "https://google.com/search?q=hello");
+        assert_eq!(to_google_search_url(fake_query), format!("{}/search?q=hello", GOOGLE_URL));
     }
 
     #[test]
     fn test_construct_google_search_url_with_encoding() {
         let fake_query = "hello world";
-        assert_eq!(to_google_search_url(fake_query), "https://google.com/search?q=hello%20world");
+        assert_eq!(to_google_search_url(fake_query), format!("{}/search?q=hello%20world", GOOGLE_URL));
     }
 }
