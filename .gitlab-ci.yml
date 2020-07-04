@@ -1,9 +1,5 @@
 image: 'rust:latest'
 
-
-before-script:
-  - echo "hello world"
-
 # Use cargo to test the project
 test:cargo:
   script:
