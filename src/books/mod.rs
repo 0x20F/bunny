@@ -8,9 +8,9 @@ pub fn open_book(query: &str) -> String {
     let (command, params) = command_from_query(&query);
 
     match command {
-        "gh" => github::to_github_url(params),
-        "tw" => twitter::to_twitter_url(params),
-        _ => google::to_google_search_url(params)
+        "gh" => github::construct_github_url(params),
+        "tw" => twitter::construct_twitter_url(params),
+        _ => google::construct_google_search_url(params)
     }
 }
 
