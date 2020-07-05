@@ -1,0 +1,10 @@
+[twitter]
+alias = "tw"
+
+[twitter.books.search]
+format = "{query}"
+url = "https://twitter.com/search?q={query}"
+
+[twitter.books.user]
+format = "@{user}"
+url = "https://twitter.com/{user}"

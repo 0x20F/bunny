@@ -2,10 +2,15 @@ mod google;
 mod twitter;
 mod github;
 
+use std::fs;
+use toml::Value;
+
 
 
 pub fn open_book(query: &str) -> String {
     let (command, params) = command_from_query(&query);
+
+    resolve_book_url(command, params);
 
     match command {
         "gh" => github::construct_github_url(params),
@@ -27,6 +32,44 @@ fn command_from_query(query: &str) -> (&str, &str) {
     }
 
     (clean, "")
+}
+
+
+fn resolve_book_url(command: &str, params: &str) {
+    let contents = fs::read_to_string("books.toml")
+        .expect("Something went wrong when reading the file");
+
+    let config = contents.parse::<Value>().unwrap();
+    let table = config.as_table().unwrap();
+
+    for (_, value) in table.iter() {
+        let alias = value.get("alias")
+            .unwrap()
+            .as_str()
+            .unwrap();
+
+        if command != alias {
+            continue;
+        }
+
+        println!("Command '{}' was given and found", command);
+
+        let books = value.get("books")
+            .unwrap()
+            .as_table()
+            .unwrap();
+
+        for (book, value) in books.iter() {
+            let format = value.get("format").unwrap();
+            let url = value.get("url").unwrap();
+
+            println!(
+                "Gotta get the format '{}' to somehow check validity of passed in params '{}'",
+                format,
+                params
+            );
+        }
+    }
 }
 
 

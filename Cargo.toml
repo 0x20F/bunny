@@ -9,3 +9,4 @@ edition = "2018"
 [dependencies]
 rocket = "0.4"
 percent-encoding = "2"
+toml = "0.4"
