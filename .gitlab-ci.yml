@@ -1,8 +1,15 @@
 image: 'rust:latest'
 
-# Use cargo to test the project
-test:cargo:
+prepare:
   script:
     - rustup default nightly
     - rustc --version && cargo --version  # Print version info for debugging
+    - rustup component add clippy
+
+test:
+  script:
     - cargo test --workspace --verbose
+
+lint:
+  script:
+    - cargo clippy
