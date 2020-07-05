@@ -4,28 +4,31 @@ mod github;
 
 
 
-
-
 pub fn open_book(query: &str) -> String {
-    let command = command_from_query(&query);
+    let (command, params) = command_from_query(&query);
 
     let redirect_url = match command.as_ref() {
-        github::ALIAS => github::to_github_url(&query),
-        twitter::ALIAS => twitter::to_twitter_url(&query),
-        _ => google::to_google_search_url(&query)
+        "gh" => github::to_github_url(params),
+        "tw" => twitter::to_twitter_url(params),
+        _ => google::to_google_search_url(params)
     };
 
     redirect_url
 }
 
 
-fn command_from_query(query: &str) -> &str {
-    if query.contains(' ') {
-        let first_space = query.find(' ').unwrap_or(0);
-        return &query[..first_space];
+fn command_from_query(query: &str) -> (&str, &str) {
+    let clean = query.trim();
+
+    if clean.contains(' ') {
+        let space = clean.find(' ').unwrap_or(0);
+
+        let command = &clean[..space];
+        let params = &clean[space..];
+        return (command, params.trim());
     }
 
-    query
+    (clean, "")
 }
 
 
@@ -37,7 +40,7 @@ mod tests {
     #[test]
     fn test_get_command_from_query_no_whitespace() {
         let actual = command_from_query("gh");
-        let expected = "gh";
+        let expected = ("gh", "");
 
         assert_eq!(actual, expected);
     }
@@ -45,7 +48,7 @@ mod tests {
     #[test]
     fn test_get_command_from_query_with_whitespace() {
         let actual = command_from_query("gh 0x20F/paris");
-        let expected = "gh";
+        let expected = ("gh", "0x20F/paris");
 
         assert_eq!(actual, expected);
     }

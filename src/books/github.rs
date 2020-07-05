@@ -1,15 +1,10 @@
-pub const ALIAS: &str = "gh";
-
 const GITHUB_URL: &str = "https://github.com";
 const USER_INDICATOR: char = '@';
 
 
 
 
-pub fn to_github_url(query: &str) -> String {
-    let params = &query[ALIAS.len()..];
-    let params = params.trim();
-
+pub fn to_github_url(params: &str) -> String {
     if params.is_empty() {
         return GITHUB_URL.to_string();
     }
@@ -18,7 +13,8 @@ pub fn to_github_url(query: &str) -> String {
         return to_github_profile_url(&params[1..]);
     }
 
-    to_github_search_url(&params)
+    // Assume its a page url if nothing else
+    to_github_repo_url(&params)
 }
 
 
@@ -29,9 +25,8 @@ fn to_github_profile_url(profile: &str) -> String {
 
 
 
-fn to_github_search_url(query: &str) -> String {
-    let encoded = crate::encoder::encode(query);
-    let search_url = format!("{}/search?q={}", GITHUB_URL, encoded);
+fn to_github_repo_url(repo: &str) -> String {
+    let search_url = format!("{}/{}", GITHUB_URL, repo);
 
     search_url
 }
@@ -46,32 +41,32 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_construct_twitter_url() {
-        let fake_query = "tw";
+    fn test_construct_github_url() {
+        let fake_query = "";
         assert_eq!(to_github_url(fake_query), GITHUB_URL);
     }
 
     #[test]
-    fn test_construct_twitter_url_query() {
-        let fake_query = "tw hello world";
-        assert_eq!(to_github_url(fake_query), format!("{}/search?q=hello%20world", GITHUB_URL));
+    fn test_construct_github_url_query() {
+        let fake_query = "0x20F/paris";
+        assert_eq!(to_github_url(fake_query), format!("{}/0x20F/paris", GITHUB_URL));
     }
 
     #[test]
-    fn test_construct_twitter_url_profile() {
-        let fake_query = "tw @water";
+    fn test_construct_github_url_profile() {
+        let fake_query = "@water";
         assert_eq!(to_github_url(fake_query), format!("{}/water", GITHUB_URL));
     }
 
     #[test]
-    fn test_construct_twitter_profile_url() {
+    fn test_construct_github_profile_url() {
         let fake_profile = "abcde";
         assert_eq!(to_github_profile_url(fake_profile), format!("{}/abcde", GITHUB_URL));
     }
 
     #[test]
-    fn test_construct_twitter_search_url() {
-        let fake_query = "hello world";
-        assert_eq!(to_github_search_url(fake_query), format!("{}/search?q=hello%20world", GITHUB_URL));
+    fn test_construct_github_repo_url() {
+        let fake_query = "0x20F/paris";
+        assert_eq!(to_github_repo_url(fake_query), format!("{}/0x20F/paris", GITHUB_URL));
     }
 }

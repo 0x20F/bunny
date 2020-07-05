@@ -1,15 +1,10 @@
-pub const ALIAS: &str = "tw";
-
 const TWITTER_URL: &str = "https://twitter.com";
 const USER_INDICATOR: char = '@';
 
 
 
 
-pub fn to_twitter_url(query: &str) -> String {
-    let params = &query[ALIAS.len()..];
-    let params = params.trim();
-
+pub fn to_twitter_url(params: &str) -> String {
     if params.is_empty() {
         return TWITTER_URL.to_string();
     }
@@ -47,19 +42,19 @@ mod tests {
 
     #[test]
     fn test_construct_twitter_url() {
-        let fake_query = "tw";
+        let fake_query = "";
         assert_eq!(to_twitter_url(fake_query), TWITTER_URL);
     }
 
     #[test]
     fn test_construct_twitter_url_query() {
-        let fake_query = "tw hello world";
+        let fake_query = "hello world";
         assert_eq!(to_twitter_url(fake_query), format!("{}/search?q=hello%20world", TWITTER_URL));
     }
 
     #[test]
     fn test_construct_twitter_url_profile() {
-        let fake_query = "tw @water";
+        let fake_query = "@water";
         assert_eq!(to_twitter_url(fake_query), format!("{}/water", TWITTER_URL));
     }
 
