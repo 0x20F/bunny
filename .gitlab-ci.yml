@@ -1,7 +1,6 @@
 image: 'rust:latest'
 
-prepare:
-  script:
+before_script:
     - rustup default nightly
     - rustc --version && cargo --version  # Print version info for debugging
     - rustup component add clippy
