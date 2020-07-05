@@ -7,13 +7,11 @@ mod github;
 pub fn open_book(query: &str) -> String {
     let (command, params) = command_from_query(&query);
 
-    let redirect_url = match command.as_ref() {
+    match command {
         "gh" => github::to_github_url(params),
         "tw" => twitter::to_twitter_url(params),
         _ => google::to_google_search_url(params)
-    };
-
-    redirect_url
+    }
 }
 
 
