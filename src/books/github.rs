@@ -26,9 +26,7 @@ fn construct_github_profile_url(profile: &str) -> String {
 
 
 fn construct_github_repo_url(repo: &str) -> String {
-    let search_url = format!("{}/{}", GITHUB_URL, repo);
-
-    search_url
+    format!("{}/{}", GITHUB_URL, repo)
 }
 
 

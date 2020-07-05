@@ -4,9 +4,8 @@ const GOOGLE_URL: &str = "https://google.com";
 
 pub fn construct_google_search_url(query: &str) -> String {
     let encoded = crate::encoder::encode(query);
-    let search_url = format!("{}/search?q={}", GOOGLE_URL, encoded);
 
-    search_url
+    format!("{}/search?q={}", GOOGLE_URL, encoded)
 }
 
 
