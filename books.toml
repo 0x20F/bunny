@@ -1,0 +1,19 @@
+[twitter]
+alias = "tw"
+
+[twitter.pages]
+# Should have an option to pass params with no prefix
+# while 'default' means no params, only the command
+search = { prefix = "-s", url = "https://twitter.com/search?q={encoded}" }
+user = { prefix = "@", url = "https://twitter.com/{raw}" }
+default = { url = "https://twitter.com" }
+
+
+
+[github]
+alias = "gh"
+
+[github.pages]
+repo = { prefix = "-r", url = "https://github.com/{raw}" }
+use = { prefix = "@", url = "https://github.com/{raw}" }
+default = { url = "https://github.com" }

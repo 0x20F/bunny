@@ -128,8 +128,10 @@ dependencies = [
 name = "bunny"
 version = "0.1.0"
 dependencies = [
+ "key-list",
  "percent-encoding 2.1.0",
  "rocket",
+ "toml",
 ]
 
 [[package]]
@@ -331,6 +333,12 @@ checksum = "c398b2b113b55809ceb9ee3e753fcbac793f1956663f3c36549c1346015c2afe"
 dependencies = [
  "autocfg",
 ]
+
+[[package]]
+name = "key-list"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9c0e10f1d9e18d3803d500a2c74cf6297c40ee8bf8b3061206180a68972f68ab"
 
 [[package]]
 name = "language-tags"
