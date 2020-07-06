@@ -8,7 +8,14 @@ use key_list::KeyList;
 
 pub fn open_book(query: &str) -> String {
     let (command, params) = command_from_query(&query);
-    resolve_book_url(command, params)
+
+    let contents = fs::read_to_string("books.toml")
+        .expect("Something went wrong when reading the file");
+
+    let config = contents.parse::<Value>().unwrap();
+    let books = config.as_table().unwrap();
+
+    resolve_book_url(books, command, params)
 }
 
 
@@ -24,6 +31,52 @@ fn command_from_query(query: &str) -> (&str, &str) {
     }
 
     (clean, "")
+}
+
+
+fn resolve_book_url(books: &Table, command: &str, params: &str) -> String {
+    for (_, book) in books.iter() {
+        let alias = value_as_str(book, "alias");
+
+        if command == alias {
+            let url = resolve_correct_page(book, params);
+
+            if let Some(url) = url {
+                return url;
+            }
+        }
+    }
+
+    // If nothing was found, go to a search engine
+    search_engine_query(format!("{} {}", command, params).as_ref())
+}
+
+
+fn resolve_correct_page(book: &Value, params: &str) -> Option<String> {
+    let pages = value_as_table(book, "pages");
+    let mut default: Option<&Value> = None;
+
+    for (name, page) in pages.iter() {
+        if name == "default" {
+            default = Some(page);
+            continue;
+        }
+
+        let prefix = value_as_str(page, "prefix");
+        let url = value_as_str(page, "url");
+
+        if params.starts_with(prefix) {
+            let params = params.replace(prefix, "");
+            let url = replace_keys(url, params.trim());
+
+            return Some(url);
+        }
+    }
+
+    match default {
+        Some(v) => Some(value_as_str(v, "url").to_owned()),
+        None => None
+    }
 }
 
 
@@ -69,60 +122,6 @@ fn search_engine_query(data: &str) -> String {
 }
 
 
-fn resolve_book_url(command: &str, params: &str) -> String {
-    let contents = fs::read_to_string("books.toml")
-        .expect("Something went wrong when reading the file");
-
-    let config = contents.parse::<Value>().unwrap();
-    let books = config.as_table().unwrap();
-
-
-    for (_, book) in books.iter() {
-        let alias = value_as_str(book, "alias");
-
-        if command == alias {
-            let url = resolve_correct_option(book, params);
-
-            if let Some(url) = url {
-                return url;
-            }
-        }
-    }
-
-    // If nothing was found, go to a search engine
-    search_engine_query(format!("{} {}", command, params).as_ref())
-}
-
-
-fn resolve_correct_option(book: &Value, params: &str) -> Option<String> {
-    let options = value_as_table(book, "options");
-    let mut default: Option<&Value> = None;
-
-    for (name, option) in options.iter() {
-        if name == "default" {
-            default = Some(option);
-            continue;
-        }
-
-        let prefix = value_as_str(option, "prefix");
-        let url = value_as_str(option, "url");
-
-        if params.starts_with(prefix) {
-            let params = params.replace(prefix, "");
-            let url = replace_keys(url, params.trim());
-
-            return Some(url);
-        }
-    }
-
-    match default {
-        Some(v) => Some(value_as_str(v, "url").to_owned()),
-        None => None
-    }
-}
-
-
-
 
 
 
@@ -144,5 +143,23 @@ mod tests {
         let expected = ("gh", "0x20F/paris");
 
         assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn test_replace_keys_raw_data() {
+        let text = "{raw}";
+        let data = "replaced";
+        let replaced = replace_keys(text, data);
+
+        assert_eq!(replaced, "replaced");
+    }
+
+    #[test]
+    fn test_replace_keys_encoded_data() {
+        let text = "{encoded}";
+        let data = "hello world";
+        let replaced = replace_keys(text, data);
+
+        assert_eq!(replaced, "hello%20world");
     }
 }
