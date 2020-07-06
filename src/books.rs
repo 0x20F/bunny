@@ -39,11 +39,7 @@ fn resolve_book_url(books: &Table, command: &str, params: &str) -> String {
         let alias = value_as_str(book, "alias");
 
         if command == alias {
-            let url = resolve_correct_page(book, params);
-
-            if let Some(url) = url {
-                return url;
-            }
+            return resolve_correct_page(book, params);
         }
     }
 
@@ -53,7 +49,7 @@ fn resolve_book_url(books: &Table, command: &str, params: &str) -> String {
 }
 
 
-fn resolve_correct_page(book: &Value, params: &str) -> Option<String> {
+fn resolve_correct_page(book: &Value, params: &str) -> String {
     let pages = value_as_table(book, "pages");
 
     for (_, page) in pages.iter() {
@@ -64,16 +60,13 @@ fn resolve_correct_page(book: &Value, params: &str) -> Option<String> {
             let clean_data = &params[prefix.len()..].trim();
             let url = replace_keys(url, clean_data);
 
-            return Some(url);
+            return url;
         }
     }
 
     // If it made it all the way here, no other pages matched
-    // check if a default was set and use that
-    match book.get("default") {
-        Some(v) => Some(v.as_str().unwrap().to_owned()),
-        None => None
-    }
+    // just use default
+    value_as_str(book, "default").to_owned()
 }
 
 

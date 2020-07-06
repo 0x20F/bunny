@@ -1,5 +1,6 @@
 [twitter]
 alias = "tw"
+# Default page should be required
 default = "https://twitter.com"
 
 [twitter.pages]
