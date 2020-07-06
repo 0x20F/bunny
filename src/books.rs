@@ -169,6 +169,22 @@ mod tests {
     }
 
     #[test]
+    fn remove_prefix_single_character() {
+        let text = "@lmao";
+        let actual = remove_prefix(text, "@");
+
+        assert_eq!(actual, "lmao");
+    }
+
+    #[test]
+    fn remove_prefix_multiple_characters() {
+        let text = "----s lmao";
+        let actual = remove_prefix(text, "----s");
+
+        assert_eq!(actual, "lmao");
+    }
+
+    #[test]
     fn remove_prefix_from_start_with_space() {
         let text = "-s with space";
         let actual = remove_prefix(text, "-s");
