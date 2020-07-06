@@ -57,8 +57,7 @@ fn resolve_correct_page(book: &Value, params: &str) -> String {
         let url = value_as_str(page, "url");
 
         if params.starts_with(prefix) {
-            let clean_data = &params[prefix.len()..].trim();
-            let url = replace_keys(url, clean_data);
+            let url = replace_keys(url, remove_prefix(params, prefix));
 
             return url;
         }
@@ -86,6 +85,11 @@ fn value_as_table<'a>(value: &'a Value, key: &str) -> &'a Table {
 }
 
 
+fn remove_prefix<'a>(text: &'a str, prefix: &'a str) -> &'a str {
+    &text[prefix.len()..].trim()
+}
+
+
 fn replace_keys(text: &str, data: &str) -> String {
     let keys = KeyList::new(text, '{', '}');
     let mut clean = String::from(text);
@@ -110,6 +114,9 @@ fn search_engine_query(data: &str) -> String {
     let encoded = crate::encoder::encode(data);
     format!("https://google.com/search?q={}", encoded)
 }
+
+
+
 
 
 
@@ -151,5 +158,29 @@ mod tests {
         let replaced = replace_keys(text, data);
 
         assert_eq!(replaced, "hello%20world");
+    }
+
+    #[test]
+    fn test_search_engine_query() {
+        let text = "hello world";
+        let query = search_engine_query(text);
+
+        assert_eq!(query, "https://google.com/search?q=hello%20world");
+    }
+
+    #[test]
+    fn remove_prefix_from_start_with_space() {
+        let text = "-s with space";
+        let actual = remove_prefix(text, "-s");
+
+        assert_eq!(actual, "with space");
+    }
+
+    #[test]
+    fn remove_prefix_from_start_without_space() {
+        let text = "-swithout space";
+        let actual = remove_prefix(text, "-s");
+
+        assert_eq!(actual, "without space");
     }
 }
