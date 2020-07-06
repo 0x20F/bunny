@@ -17,5 +17,18 @@ alias = "gh"
 default = "https://github.com"
 
 [github.pages]
+search = { prefix = "-s", url = "https://github.com/search?q={encoded}"}
 repo = { prefix = "-r", url = "https://github.com/{raw}" }
 use = { prefix = "@", url = "https://github.com/{raw}" }
+
+
+
+
+[reddit]
+alias = "rd"
+default = "https://reddit.com"
+
+[reddit.pages]
+search = { prefix = "s/", url = "https://reddit.com/search?q={encoded}" }
+subreddit = { prefix = "r/", url = "https://reddit.com/r/{raw}" }
+user = { prefix = "u/", url = "https://reddit.com/u/{raw}" }
