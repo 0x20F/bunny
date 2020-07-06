@@ -47,7 +47,8 @@ fn resolve_book_url(books: &Table, command: &str, params: &str) -> String {
         }
     }
 
-    // If nothing was found, go to a search engine
+    // If nothing was returned in the earlier stages
+    // just forward whatever was typed to a search engine
     search_engine_query(format!("{} {}", command, params).as_ref())
 }
 
@@ -66,13 +67,15 @@ fn resolve_correct_page(book: &Value, params: &str) -> Option<String> {
         let url = value_as_str(page, "url");
 
         if params.starts_with(prefix) {
-            let params = params.replace(prefix, "");
-            let url = replace_keys(url, params.trim());
+            let clean_data = &params[prefix.len()..].trim();
+            let url = replace_keys(url, clean_data);
 
             return Some(url);
         }
     }
 
+    // If it made it all the way here, no other pages matched
+    // check if a default was set and use that
     match default {
         Some(v) => Some(value_as_str(v, "url").to_owned()),
         None => None
