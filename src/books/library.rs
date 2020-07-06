@@ -29,26 +29,26 @@ impl Library {
 
 
 
-    pub fn get_requested_url(&self) -> String {
-        let books = self.books.borrow();
+    pub fn find_requested_url(&self) -> String {
+        let books = self.books.borrow().into_iter();
 
-        for (_, book) in books.into_iter() {
+        for (_, book) in books {
             if self.command == book.alias {
-                return self.get_book_page(book);
+                return self.get_page(book);
             }
         }
 
         // If no alias was found, just search for the given query
         let query = format!("{} {}", self.command, self.params);
-        Library::search_engine_query(&query)
+        Library::construct_search_engine_query(&query)
     }
 
 
 
-    pub fn get_book_page(&self, book: &Book) -> String {
-        let pages = book.pages.borrow();
+    pub fn get_page(&self, book: &Book) -> String {
+        let pages = book.pages.borrow().into_iter();
 
-        for (_, page) in pages.iter() {
+        for (_, page) in pages {
             let prefix = &page.prefix;
             let url = &page.url;
             let params = &self.params;
@@ -73,7 +73,7 @@ impl Library {
 
 
 
-    fn search_engine_query(data: &str) -> String {
+    fn construct_search_engine_query(data: &str) -> String {
         let encoded = crate::encoder::encode(&data);
 
         format!("https://google.com/search?q={}", encoded)
@@ -134,7 +134,7 @@ mod tests {
     #[test]
     fn test_search_engine_query() {
         let text = "hello world";
-        let query = Library::search_engine_query(text);
+        let query = Library::construct_search_engine_query(text);
 
         assert_eq!(query, "https://google.com/search?q=hello%20world");
     }
