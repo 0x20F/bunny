@@ -3,7 +3,6 @@
 #[macro_use] extern crate serde;
 
 mod books;
-mod config;
 mod encoder;
 
 use rocket::response::Redirect;
