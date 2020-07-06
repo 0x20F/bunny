@@ -55,14 +55,8 @@ fn resolve_book_url(books: &Table, command: &str, params: &str) -> String {
 
 fn resolve_correct_page(book: &Value, params: &str) -> Option<String> {
     let pages = value_as_table(book, "pages");
-    let mut default: Option<&Value> = None;
 
-    for (name, page) in pages.iter() {
-        if name == "default" {
-            default = Some(page);
-            continue;
-        }
-
+    for (_, page) in pages.iter() {
         let prefix = value_as_str(page, "prefix");
         let url = value_as_str(page, "url");
 
@@ -76,8 +70,8 @@ fn resolve_correct_page(book: &Value, params: &str) -> Option<String> {
 
     // If it made it all the way here, no other pages matched
     // check if a default was set and use that
-    match default {
-        Some(v) => Some(value_as_str(v, "url").to_owned()),
+    match book.get("default") {
+        Some(v) => Some(v.as_str().unwrap().to_owned()),
         None => None
     }
 }
