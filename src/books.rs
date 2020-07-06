@@ -1,11 +1,9 @@
-mod google;
-mod twitter;
-mod github;
-
 use std::fs;
 use toml::Value;
 use toml::value::Table;
 use key_list::KeyList;
+
+
 
 
 pub fn open_book(query: &str) -> String {
