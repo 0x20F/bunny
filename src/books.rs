@@ -1,7 +1,9 @@
 use std::fs;
-use toml::Value;
-use toml::value::Table;
+use std::borrow::Borrow;
+
 use key_list::KeyList;
+use std::collections::HashMap;
+use crate::config::{ Book };
 
 
 
@@ -10,12 +12,11 @@ pub fn open_book(query: &str) -> String {
     let (command, params) = command_from_query(&query);
 
     let contents = fs::read_to_string("books.toml")
-        .expect("Something went wrong when reading the file");
+        .expect("Could not read the bookmarks file!");
 
-    let config = contents.parse::<Value>().unwrap();
-    let books = config.as_table().unwrap();
+    let books: HashMap<String, Book> = toml::from_str(&contents).unwrap();
 
-    resolve_book_url(books, command, params)
+    resolve_book_url(&books, command, params)
 }
 
 
@@ -34,54 +35,34 @@ fn command_from_query(query: &str) -> (&str, &str) {
 }
 
 
-fn resolve_book_url(books: &Table, command: &str, params: &str) -> String {
-    for (_, book) in books.iter() {
-        let alias = value_as_str(book, "alias");
+fn resolve_book_url(books: &HashMap<String, Book>, command: &str, params: &str) -> String {
+    for (_, book) in books.into_iter() {
+        let alias = &book.alias;
 
         if command == alias {
             return resolve_correct_page(book, params);
         }
     }
 
-    // If nothing was returned in the earlier stages
-    // just forward whatever was typed to a search engine
     search_engine_query(format!("{} {}", command, params).as_ref())
 }
 
 
-fn resolve_correct_page(book: &Value, params: &str) -> String {
-    let pages = value_as_table(book, "pages");
+fn resolve_correct_page(book: &Book, params: &str) -> String {
+    let pages = book.pages.borrow();
 
     for (_, page) in pages.iter() {
-        let prefix = value_as_str(page, "prefix");
-        let url = value_as_str(page, "url");
+        let prefix = &page.prefix;
+        let url = &page.url;
 
         if params.starts_with(prefix) {
-            let url = replace_keys(url, remove_prefix(params, prefix));
+            let url = replace_keys(&url, remove_prefix(params, prefix));
 
             return url;
         }
     }
 
-    // If it made it all the way here, no other pages matched
-    // just use default
-    value_as_str(book, "default").to_owned()
-}
-
-
-fn value_as_str<'a>(value: &'a Value, key: &str) -> &'a str {
-    match value.get(key) {
-        Some(v) => v.as_str().unwrap(),
-        None => ""
-    }
-}
-
-
-fn value_as_table<'a>(value: &'a Value, key: &str) -> &'a Table {
-    value.get(key)
-        .unwrap()
-        .as_table()
-        .unwrap()
+    book.default.to_owned()
 }
 
 
@@ -110,7 +91,6 @@ fn replace_keys(text: &str, data: &str) -> String {
 
 
 fn search_engine_query(data: &str) -> String {
-    // google, for now
     let encoded = crate::encoder::encode(data);
     format!("https://google.com/search?q={}", encoded)
 }
