@@ -47,11 +47,16 @@ impl Library {
 
     pub fn get_page(&self, book: &Book) -> String {
         let pages = book.pages.borrow().into_iter();
+        let params = &self.params;
+
+        // If no params passed, its default
+        if params.is_empty() {
+            return book.default.to_owned();
+        }
 
         for (_, page) in pages {
             let prefix = &page.prefix;
             let url = &page.url;
-            let params = &self.params;
 
             if params.starts_with(prefix) {
                 let clean = Library::remove_prefix(params, prefix);
