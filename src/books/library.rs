@@ -30,7 +30,7 @@ impl Library {
 
 
     pub fn get_url(&self) -> String {
-        let books = self.books.borrow().into_iter();
+        let books = self.books.borrow().iter();
 
         for (_, book) in books {
             if self.command == book.alias {
@@ -46,7 +46,7 @@ impl Library {
 
 
     pub fn get_page(&self, book: &Book) -> String {
-        let pages = book.pages.borrow().into_iter();
+        let pages = book.pages.borrow().iter();
         let params = &self.params;
 
         // If no params passed, its default
