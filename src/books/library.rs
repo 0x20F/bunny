@@ -29,7 +29,7 @@ impl Library {
 
 
 
-    pub fn find_requested_url(&self) -> String {
+    pub fn get_url(&self) -> String {
         let books = self.books.borrow().into_iter();
 
         for (_, book) in books {

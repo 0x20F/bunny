@@ -10,7 +10,7 @@ pub fn open_book(query: &str) -> String {
     let (command, params) = command_from_query(&query);
 
     let lib = Library::new(command, params);
-    lib.find_requested_url()
+    lib.get_url()
 }
 
 
