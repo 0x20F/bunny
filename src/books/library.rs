@@ -16,7 +16,9 @@ pub struct Library {
 
 impl Library {
     pub fn new(command: &str, params: &str) -> Self {
-        let contents = fs::read_to_string("books.toml")
+        let config_path = format!("{}/{}", dirs::home_dir().unwrap().display(), "bookmarks.toml");
+
+        let contents = fs::read_to_string(config_path)
             .expect("Could not read the bookmarks file!");
 
         Library {
