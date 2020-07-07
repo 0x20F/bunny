@@ -3,8 +3,6 @@ alias = "tw"
 default = "https://twitter.com"
 
 [twitter.pages]
-# Should have an option to pass params with no prefix
-# while 'default' means no params, only the command
 search = { prefix = "NONE", url = "https://twitter.com/search?q={encoded}" }
 user = { prefix = "@", url = "https://twitter.com/{raw}" }
 
@@ -17,7 +15,7 @@ default = "https://github.com"
 
 [github.pages]
 search = { prefix = "-s", url = "https://github.com/search?q={encoded}"}
-repo = { prefix = "-r", url = "https://github.com/{raw}" }
+repo = { prefix = "NONE", url = "https://github.com/{raw}" }
 use = { prefix = "@", url = "https://github.com/{raw}" }
 
 
