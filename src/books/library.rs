@@ -101,60 +101,10 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_replace_keys_raw_data() {
-        let text = "{raw}";
-        let data = "replaced";
-        let replaced = Library::replace_keys(text, data);
-
-        assert_eq!(replaced, "replaced");
-    }
-
-    #[test]
-    fn test_replace_keys_encoded_data() {
-        let text = "{encoded}";
-        let data = "hello world";
-        let replaced = Library::replace_keys(text, data);
-
-        assert_eq!(replaced, "hello%20world");
-    }
-
-    #[test]
     fn test_search_engine_query() {
         let text = "hello world";
         let query = Library::construct_search_engine_query(text);
 
         assert_eq!(query, "https://google.com/search?q=hello%20world");
-    }
-
-    #[test]
-    fn remove_prefix_single_character() {
-        let text = "@lmao";
-        let actual = Library::remove_prefix(text, "@");
-
-        assert_eq!(actual, "lmao");
-    }
-
-    #[test]
-    fn remove_prefix_multiple_characters() {
-        let text = "----s lmao";
-        let actual = Library::remove_prefix(text, "----s");
-
-        assert_eq!(actual, "lmao");
-    }
-
-    #[test]
-    fn remove_prefix_from_start_with_space() {
-        let text = "-s with space";
-        let actual = Library::remove_prefix(text, "-s");
-
-        assert_eq!(actual, "with space");
-    }
-
-    #[test]
-    fn remove_prefix_from_start_without_space() {
-        let text = "-swithout space";
-        let actual = Library::remove_prefix(text, "-s");
-
-        assert_eq!(actual, "without space");
     }
 }
