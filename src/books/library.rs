@@ -49,17 +49,25 @@ impl Library {
     pub fn get_page(&self, book: &Book) -> String {
         let params = &self.params;
 
-        // If no params passed, its default
+        // If no params passed, it's default
         if params.is_empty() {
             return book.default.to_owned();
         }
 
         for prefix in book.get_prefixes() {
+            let page = book.get_page_by_prefix(prefix).unwrap();
+
+            // For special cases
+            match prefix {
+                "NONE" => return page.construct_url(params),
+                "CAPS" => (), // Idk just as reminder
+                 _ => ()
+            }
+
             if !params.starts_with(prefix) {
                 continue;
             }
 
-            let page = book.get_page_by_prefix(prefix).unwrap();
             let query = page.remove_prefix(params);
             let url = page.construct_url(query);
 
