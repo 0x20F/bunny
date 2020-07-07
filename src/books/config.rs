@@ -23,7 +23,7 @@ impl Book {
 
     pub fn get_page_by_prefix(&self, prefix: &str) -> Option<&Page> {
         for (_, page) in self.pages.iter() {
-            if &page.prefix == prefix {
+            if page.prefix == prefix {
                 return Some(page);
             }
         }
