@@ -46,7 +46,6 @@ impl Library {
 
 
     pub fn get_page(&self, book: &Book) -> String {
-        let pages = book.pages.borrow().iter();
         let params = &self.params;
 
         // If no params passed, its default
@@ -54,16 +53,16 @@ impl Library {
             return book.default.to_owned();
         }
 
-        for (_, page) in pages {
-            let prefix = &page.prefix;
-            let url = &page.url;
-
-            if params.starts_with(prefix) {
-                let clean = Library::remove_prefix(params, prefix);
-                let url = Library::replace_keys(&url, clean);
-
-                return url;
+        for prefix in book.get_prefixes() {
+            if !params.starts_with(prefix) {
+                continue;
             }
+
+            let page = book.get_page_by_prefix(prefix).unwrap();
+            let query = page.remove_prefix(params);
+            let url = page.construct_url(query);
+
+            return url;
         }
 
         // If no page was found, use the default one
@@ -72,36 +71,10 @@ impl Library {
 
 
 
-    fn remove_prefix<'a>(text: &'a str, prefix: &'a str) -> &'a str {
-        &text[prefix.len()..].trim()
-    }
-
-
-
     fn construct_search_engine_query(data: &str) -> String {
         let encoded = crate::encoder::encode(&data);
 
         format!("https://google.com/search?q={}", encoded)
-    }
-
-
-
-    fn replace_keys(text: &str, data: &str) -> String {
-        let keys = KeyList::new(text, '{', '}');
-        let mut clean = String::from(text);
-
-        for key in keys {
-            match key {
-                "{encoded}" => clean = text.replace(
-                    key,
-                    crate::encoder::encode(data).as_ref()
-                ),
-                "{raw}" => clean = text.replace(key, data),
-                _ => ()
-            }
-        }
-
-        clean
     }
 }
 
