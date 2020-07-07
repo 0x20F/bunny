@@ -33,9 +33,11 @@ impl Library {
         let books = self.books.borrow().iter();
 
         for (_, book) in books {
-            if self.command == book.alias {
-                return self.get_page(book);
+            if self.command != book.alias {
+                continue;
             }
+
+            return self.get_page(book);
         }
 
         // If no alias was found, just search for the given query
