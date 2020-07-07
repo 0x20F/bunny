@@ -46,11 +46,11 @@ impl Page {
 
         for key in keys {
             match key {
-                "{encoded}" => clean = text.replace(
+                "{encoded}" => clean = clean.replace(
                     key,
                     crate::encoder::encode(data).as_ref()
                 ),
-                "{raw}" => clean = text.replace(key, data),
+                "{raw}" => clean = clean.replace(key, data),
                 _ => ()
             }
         }
