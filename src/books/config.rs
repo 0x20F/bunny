@@ -6,7 +6,7 @@ use key_list::KeyList;
 #[derive(Deserialize, Debug)]
 pub struct Book {
     pub alias: String,
-    pub default: String,
+    default: String,
     pub pages: HashMap<String, Page>
 }
 
@@ -29,6 +29,10 @@ impl Book {
         }
 
         None
+    }
+
+    pub fn get_default(&self) -> String {
+        self.default.clone()
     }
 }
 

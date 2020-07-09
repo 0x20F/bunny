@@ -53,7 +53,7 @@ impl Library {
 
         // If no params passed, it's default
         if params.is_empty() {
-            return book.default.to_owned();
+            return book.get_default();
         }
 
         for prefix in book.get_prefixes() {
@@ -77,7 +77,7 @@ impl Library {
         }
 
         // If no page was found, use the default one
-        book.default.to_owned()
+        book.get_default()
     }
 
 
