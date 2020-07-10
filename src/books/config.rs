@@ -45,7 +45,7 @@ pub struct Page {
 }
 
 impl Page {
-    pub fn construct_url(&self, data: &str) -> String {
+    pub fn encode_url(&self, data: &str) -> String {
         let keys = KeyList::new(&self.url, '{', '}');
         let mut clean = self.url.clone();
 
@@ -113,7 +113,7 @@ mod tests {
         let data = "replaced";
         let page = simple_page(".", "{raw}");
 
-        assert_eq!(page.construct_url(data), "replaced");
+        assert_eq!(page.encode_url(data), "replaced");
     }
 
     #[test]
@@ -121,7 +121,7 @@ mod tests {
         let data = "hello world";
         let page = simple_page(".", "{encoded}");
 
-        assert_eq!(page.construct_url(data), "hello%20world");
+        assert_eq!(page.encode_url(data), "hello%20world");
     }
 
     #[test]

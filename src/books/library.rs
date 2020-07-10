@@ -61,7 +61,7 @@ impl Library {
 
             // For special cases
             match prefix {
-                "NONE" => return page.construct_url(params),
+                "NONE" => return page.encode_url(params),
                 "CAPS" => (), // Idk just as reminder
                  _ => ()
             }
@@ -71,7 +71,7 @@ impl Library {
             }
 
             let query = page.remove_prefix(params);
-            let url = page.construct_url(query);
+            let url = page.encode_url(query);
 
             return url;
         }
