@@ -3,11 +3,12 @@ use key_list::KeyList;
 
 
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Default)]
 pub struct Book {
     pub alias: String,
-    default: String,
-    pub pages: HashMap<String, Page>
+    pub pages: HashMap<String, Page>,
+
+    default: String
 }
 
 impl Book {
@@ -89,6 +90,23 @@ mod tests {
         page
     }
 
+    fn simple_book() -> Book {
+        let mut pages: HashMap<String, Page> = HashMap::new();
+        pages.insert(
+            "test1".to_string(),
+            simple_page("-s", "first page")
+        );
+        pages.insert(
+            "test2".to_string(),
+            simple_page("-a", "second page")
+        );
+
+        let mut book = Book::default();
+        book.pages = pages;
+
+        book
+    }
+
 
     #[test]
     fn test_construct_url_raw_data() {
@@ -140,5 +158,23 @@ mod tests {
         let actual = page.remove_prefix(text);
 
         assert_eq!(actual, "without space");
+    }
+
+    #[test]
+    fn book_has_access_to_all_prefixes() {
+        let book = simple_book();
+
+        let actual = book.get_prefixes();
+        let expected = vec![ "-s", "-a" ];
+
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn book_can_retrieve_specific_page_by_prefix() {
+        let book = simple_book();
+
+        let page = book.get_page_by_prefix("-s").unwrap();
+        assert_eq!(page.url, "first page".to_string());
     }
 }
