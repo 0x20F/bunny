@@ -30,7 +30,7 @@ impl Library {
 
 
 
-    pub fn get_url(&self) -> String {
+    pub fn get_url(&self) -> Option<String> {
         let books = self.books.borrow().iter();
 
         for (_, book) in books {
@@ -38,12 +38,10 @@ impl Library {
                 continue;
             }
 
-            return self.get_page(book);
+            return Some(self.get_page(book));
         }
 
-        // If no alias was found, just search for the given query
-        let query = format!("{} {}", self.command, self.params);
-        Library::construct_search_engine_query(&query)
+        None
     }
 
 
@@ -78,35 +76,5 @@ impl Library {
 
         // If no page was found, use the default one
         book.get_default()
-    }
-
-
-
-    fn construct_search_engine_query(data: &str) -> String {
-        let encoded = crate::encoder::encode(&data);
-
-        format!("https://google.com/search?q={}", encoded)
-    }
-}
-
-
-
-
-
-
-
-
-
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn test_search_engine_query() {
-        let text = "hello world";
-        let query = Library::construct_search_engine_query(text);
-
-        assert_eq!(query, "https://google.com/search?q=hello%20world");
     }
 }
