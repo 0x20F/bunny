@@ -1,5 +1,4 @@
 use std::collections::HashMap;
-use crate::command::Command;
 
 
 #[derive(Deserialize, Debug, Default)]
@@ -22,13 +21,4 @@ impl Book {
 pub struct Page {
     pub prefix: String,
     pub url: String
-}
-
-impl Page {
-    pub fn handle_special_prefix(&self, cmd: &mut Command) -> Result<String, ()> {
-        match self.prefix.as_str() {
-            "NONE" | "CAPS" => Ok(cmd.encode_url(&self.url)),
-            _ => Err(())
-        }
-    }
 }

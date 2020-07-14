@@ -47,19 +47,17 @@ impl Library {
     pub fn get_page(&self, book: &Book, command: &mut Command) -> String {
         for page in book.pages.borrow().values() {
             let prefix = &page.prefix;
-
-            // Match against special prefixes
-            // if the page has any, do what those prefixes
-            // require
-            if let Ok(url) = page.handle_special_prefix(command) {
-                return url;
-            }
+            let url = &page.url;
 
             if !command.params.starts_with(prefix) {
+                if prefix == "NONE" {
+                    return command.encode_url(url);
+                }
+
                 continue;
             }
 
-            return command.encode_url_no_prefix(&page.url, prefix);
+            return command.encode_url_no_prefix(url, prefix);
         }
 
         // If no page was found, use the default one
