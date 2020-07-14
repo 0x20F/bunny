@@ -16,7 +16,6 @@ default = "https://github.com"
 [github.pages]
 search = { prefix = "-s", url = "https://github.com/search?q={encoded}"}
 repo = { prefix = "NONE", url = "https://github.com/{raw}" }
-use = { prefix = "@", url = "https://github.com/{raw}" }
 
 
 
