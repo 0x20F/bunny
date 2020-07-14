@@ -19,6 +19,12 @@ impl<'a> Command<'a> {
     }
 
 
+    pub fn encode_url_no_prefix(&mut self, url: &str, prefix: &str) -> String {
+        self.remove_prefix(prefix);
+        self.encode_url(url)
+    }
+
+
     pub fn encode_url(&mut self, url: &str) -> String {
         let keys = KeyList::new(url, '{', '}');
         let mut clean = url.to_string();
@@ -40,7 +46,7 @@ impl<'a> Command<'a> {
     }
 
 
-    pub fn remove_prefix(&mut self, prefix: &str) {
+    fn remove_prefix(&mut self, prefix: &str) {
         let prefix_length = prefix.len();
         self.params = &self.params[prefix_length..].trim();
     }

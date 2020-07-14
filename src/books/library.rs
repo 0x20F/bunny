@@ -28,10 +28,12 @@ impl Library {
         let books = self.books.borrow().iter();
 
         for (_, book) in books {
+            // If input alias doesn't match
             if command.alias != book.alias {
                 continue;
             }
 
+            // If no other params were passed besides the alias
             if command.params.is_empty() {
                 return Some(book.get_default());
             }
@@ -48,6 +50,9 @@ impl Library {
         for (_, page) in book.pages.borrow() {
             let prefix = &page.prefix;
 
+            // Match against special prefixes
+            // if the page has any, do what those prefixes
+            // require
             if let Ok(url) = page.handle_special_prefix(command) {
                 return url;
             }
@@ -56,8 +61,7 @@ impl Library {
                 continue;
             }
 
-            command.remove_prefix(prefix);
-            return command.encode_url(&page.url);
+            return command.encode_url_no_prefix(&page.url, prefix);
         }
 
         // If no page was found, use the default one
