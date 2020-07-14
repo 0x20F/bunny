@@ -10,7 +10,7 @@ pub struct Command<'a> {
 
 impl<'a> Command<'a> {
     pub fn new(query: &'a str) -> Self {
-        let (command, params) = Self::command_from_query(query);
+        let (command, params) = Self::from_query(query);
 
         Self {
             alias: command,
@@ -67,7 +67,7 @@ impl<'a> Command<'a> {
     }
 
 
-    fn command_from_query(query: &str) -> (&str, &str) {
+    fn from_query(query: &str) -> (&str, &str) {
         let clean = query.trim();
 
         if clean.contains(' ') {
@@ -79,5 +79,128 @@ impl<'a> Command<'a> {
         }
 
         (clean, "")
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn command(query: &str) -> Command {
+        Command::new(query)
+    }
+
+    #[test]
+    fn test_alias_gets_parsed_correctly() {
+        let command = command("tw la la la ");
+        assert_eq!(command.alias, "tw");
+    }
+
+    fn test_params_get_parsed_correctly() {
+        let command = command("tw extra-things");
+        assert_eq!(command.params, "extra-things");
+    }
+
+
+
+    #[test]
+    fn test_url_encoding_with_prefix_removal() {
+        let mut command = command("tw -s extra things");
+        let url = "{0}";
+
+        assert_eq!(command.encode_url(url), "-s");
+        assert_eq!(command.encode_url_no_prefix(url, "-s"), "extra");
+    }
+
+
+
+    #[test]
+    fn test_url_encoding_encoded() {
+        let mut command = command("tw hello world");
+        let url = "{encoded}";
+
+        assert_eq!(command.encode_url(url), "hello%20world");
+    }
+
+    #[test]
+    fn test_url_encoding_raw() {
+        let mut command = command("tw hello world");
+        let url = "{raw}";
+
+        assert_eq!(command.encode_url(url), "hello world");
+    }
+
+    #[test]
+    fn test_url_encoding_with_indexes() {
+        let mut command = command("tw hello world");
+        let url = "{0}";
+
+        assert_eq!(command.encode_url(url), "hello");
+    }
+
+
+
+    #[test]
+    fn test_remove_prefix_with_space() {
+        let mut command = command("tw prefix after-prefix");
+        command.remove_prefix("prefix");
+
+        assert_eq!(command.params, "after-prefix");
+    }
+
+    #[test]
+    fn test_remove_prefix_no_space() {
+        let mut command = command("tw prefixafter-prefix");
+        command.remove_prefix("prefix");
+
+        assert_eq!(command.params, "after-prefix");
+    }
+
+
+
+    #[test]
+    fn test_get_segment() {
+        let command = command("tw one two three");
+        assert_eq!(command.get_segment(0), "one");
+    }
+
+    #[test]
+    fn test_get_segment_out_of_bounds() {
+        let command = command("tw one two three");
+        assert_eq!(command.get_segment(200), "");
+    }
+
+    #[test]
+    fn test_get_all_segments() {
+        let command = command("tw one two three");
+        assert_eq!(command.all_segments(), "one two three");
+    }
+
+
+
+    #[test]
+    fn test_get_command_from_query_no_whitespace() {
+        let actual = Command::from_query("gh");
+        let expected = ("gh", "");
+
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn test_get_command_from_query_with_whitespace() {
+        let actual = Command::from_query("gh 0x20F/paris");
+        let expected = ("gh", "0x20F/paris");
+
+        assert_eq!(actual, expected);
     }
 }

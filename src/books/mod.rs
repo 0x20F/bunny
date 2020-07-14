@@ -43,22 +43,6 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_get_command_from_query_no_whitespace() {
-        let actual = command_from_query("gh");
-        let expected = ("gh", "");
-
-        assert_eq!(actual, expected);
-    }
-
-    #[test]
-    fn test_get_command_from_query_with_whitespace() {
-        let actual = command_from_query("gh 0x20F/paris");
-        let expected = ("gh", "0x20F/paris");
-
-        assert_eq!(actual, expected);
-    }
-
-    #[test]
     fn test_search_engine_query() {
         let text = "hello world";
         let query = construct_search_engine_query(text);
