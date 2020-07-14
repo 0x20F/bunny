@@ -1,39 +1,25 @@
+mod command;
 mod config;
 mod library;
 
 use library::Library;
-
+use command::Command;
 
 
 
 pub fn open_book(query: &str) -> String {
-    let (command, params) = command_from_query(&query);
-
-    let lib = Library::new(command, params);
+    let cmd = Command::new(query);
+    let lib = Library::with_command(&cmd);
 
     match lib.get_url() {
         Some(url) => url,
         None => {
-            let query = format!("{} {}", command, params);
+            let query = format!("{} {}", cmd.alias, cmd.params);
             construct_search_engine_query(&query)
         }
     }
 }
 
-
-fn command_from_query(query: &str) -> (&str, &str) {
-    let clean = query.trim();
-
-    if clean.contains(' ') {
-        let space = clean.find(' ').unwrap_or(0);
-
-        let command = &clean[..space];
-        let params = &clean[space..];
-        return (command, params.trim());
-    }
-
-    (clean, "")
-}
 
 
 fn construct_search_engine_query(data: &str) -> String {

@@ -2,29 +2,25 @@ use std::fs;
 use std::borrow::Borrow;
 use std::collections::HashMap;
 use crate::books::config::Book;
+use crate::books::command::Command;
 
 
-
-
-
-pub struct Library {
+pub struct Library<'a> {
     books: HashMap<String, Book>,
-    command: String,
-    params: String
+    command: &'a Command<'a>,
 }
 
 
-impl Library {
-    pub fn new(command: &str, params: &str) -> Self {
+impl<'a> Library<'a> {
+    pub fn with_command(cmd: &'a Command) -> Self {
         let config_path = format!("{}/{}", dirs::home_dir().unwrap().display(), "bookmarks.toml");
 
         let contents = fs::read_to_string(config_path)
             .expect("Could not read the bookmarks file!");
 
-        Library {
+        Self {
             books: toml::from_str(&contents).unwrap(),
-            command: command.to_owned(),
-            params: params.to_owned()
+            command: cmd,
         }
     }
 
@@ -34,7 +30,7 @@ impl Library {
         let books = self.books.borrow().iter();
 
         for (_, book) in books {
-            if self.command != book.alias {
+            if self.command.alias != book.alias {
                 continue;
             }
 
@@ -47,7 +43,7 @@ impl Library {
 
 
     pub fn get_page(&self, book: &Book) -> String {
-        let params = &self.params;
+        let params = self.command.params;
 
         // If no params passed, it's default
         if params.is_empty() {

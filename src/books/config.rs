@@ -56,6 +56,8 @@ impl Page {
                     crate::encoder::encode(data).as_ref()
                 ),
                 "{raw}" => clean = clean.replace(key, data),
+                //"{0}" => clean = self.replace_with_segment(data, key, 0),
+                //"{1}" => clean = self.replace_with_segment(data, key, 1),
                 _ => ()
             }
         }
