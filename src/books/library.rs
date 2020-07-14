@@ -25,9 +25,7 @@ impl Library {
 
 
     pub fn get_url(&self, command: &mut Command) -> Option<String> {
-        let books = self.books.borrow().iter();
-
-        for (_, book) in books {
+        for book in self.books.borrow().values() {
             // If input alias doesn't match
             if command.alias != book.alias {
                 continue;
@@ -47,7 +45,7 @@ impl Library {
 
 
     pub fn get_page(&self, book: &Book, command: &mut Command) -> String {
-        for (_, page) in book.pages.borrow() {
+        for page in book.pages.borrow().values() {
             let prefix = &page.prefix;
 
             // Match against special prefixes
