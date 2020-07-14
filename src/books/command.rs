@@ -33,9 +33,9 @@ impl<'a> Command<'a> {
             match key {
                 "{encoded}" => clean = clean.replace(
                     key,
-                    crate::encoder::encode(self.all_segments()).as_ref()
+                    crate::encoder::encode(self.get_all_segments()).as_ref()
                 ),
-                "{raw}" => clean = clean.replace(key, self.all_segments()),
+                "{raw}" => clean = clean.replace(key, self.get_all_segments()),
                 "{0}" => clean = clean.replace(key, self.get_segment(0)),
                 "{1}" => clean = clean.replace(key, self.get_segment(1)),
                 _ => ()
@@ -62,7 +62,7 @@ impl<'a> Command<'a> {
     }
 
 
-    fn all_segments(&self) -> &str {
+    fn get_all_segments(&self) -> &str {
         self.params
     }
 
@@ -184,7 +184,7 @@ mod tests {
     #[test]
     fn test_get_all_segments() {
         let command = command("tw one two three");
-        assert_eq!(command.all_segments(), "one two three");
+        assert_eq!(command.get_all_segments(), "one two three");
     }
 
 
