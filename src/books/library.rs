@@ -2,7 +2,7 @@ use std::fs;
 use std::borrow::Borrow;
 use std::collections::HashMap;
 use crate::books::config::Book;
-use crate::books::command::Command;
+use crate::command::Command;
 
 
 pub struct Library {

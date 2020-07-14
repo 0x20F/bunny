@@ -3,14 +3,19 @@
 #[macro_use] extern crate serde;
 
 mod books;
+mod command;
 mod encoder;
 
+use command::Command;
 use rocket::response::Redirect;
 
 
 #[get("/search?<cmd>")]
 fn search(cmd: String) -> Redirect {
-    Redirect::to(books::open_book(&cmd))
+    let mut command = Command::new(&cmd);
+    let url = books::open_book(&mut command);
+
+    Redirect::to(url)
 }
 
 

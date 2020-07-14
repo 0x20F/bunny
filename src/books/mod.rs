@@ -1,17 +1,15 @@
-mod command;
 mod config;
 mod library;
 
 use library::Library;
-use command::Command;
+use crate::command::Command;
 
 
 
-pub fn open_book(query: &str) -> String {
-    let mut cmd = Command::new(query);
+pub fn open_book(cmd: &mut Command) -> String {
     let lib = Library::new();
 
-    match lib.get_url(&mut cmd) {
+    match lib.get_url(cmd) {
         Some(url) => url,
         None => {
             let query = format!("{} {}", cmd.alias, cmd.params);
