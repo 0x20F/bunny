@@ -106,6 +106,7 @@ mod tests {
         assert_eq!(command.alias, "tw");
     }
 
+    #[test]
     fn test_params_get_parsed_correctly() {
         let command = command("tw extra-things");
         assert_eq!(command.params, "extra-things");
