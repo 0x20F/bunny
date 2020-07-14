@@ -8,10 +8,10 @@ use command::Command;
 
 
 pub fn open_book(query: &str) -> String {
-    let cmd = Command::new(query);
-    let lib = Library::with_command(&cmd);
+    let mut cmd = Command::new(query);
+    let lib = Library::new();
 
-    match lib.get_url() {
+    match lib.get_url(&mut cmd) {
         Some(url) => url,
         None => {
             let query = format!("{} {}", cmd.alias, cmd.params);

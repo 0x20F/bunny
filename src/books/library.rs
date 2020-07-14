@@ -5,36 +5,38 @@ use crate::books::config::Book;
 use crate::books::command::Command;
 
 
-pub struct Library<'a> {
-    books: HashMap<String, Book>,
-    command: &'a Command<'a>,
+pub struct Library {
+    books: HashMap<String, Book>
 }
 
 
-impl<'a> Library<'a> {
-    pub fn with_command(cmd: &'a Command) -> Self {
+impl Library {
+    pub fn new() -> Self {
         let config_path = format!("{}/{}", dirs::home_dir().unwrap().display(), "bookmarks.toml");
 
         let contents = fs::read_to_string(config_path)
             .expect("Could not read the bookmarks file!");
 
         Self {
-            books: toml::from_str(&contents).unwrap(),
-            command: cmd,
+            books: toml::from_str(&contents).unwrap()
         }
     }
 
 
 
-    pub fn get_url(&self) -> Option<String> {
+    pub fn get_url(&self, command: &mut Command) -> Option<String> {
         let books = self.books.borrow().iter();
 
         for (_, book) in books {
-            if self.command.alias != book.alias {
+            if command.alias != book.alias {
                 continue;
             }
 
-            return Some(self.get_page(book));
+            if command.params.is_empty() {
+                return Some(book.get_default());
+            }
+
+            return Some(self.get_page(book, command));
         }
 
         None
@@ -42,32 +44,20 @@ impl<'a> Library<'a> {
 
 
 
-    pub fn get_page(&self, book: &Book) -> String {
-        let params = self.command.params;
+    pub fn get_page(&self, book: &Book, command: &mut Command) -> String {
+        for (_, page) in book.pages.borrow() {
+            let prefix = &page.prefix;
 
-        // If no params passed, it's default
-        if params.is_empty() {
-            return book.get_default();
-        }
-
-        for prefix in book.get_prefixes() {
-            let page = book.get_page_by_prefix(prefix).unwrap();
-
-            // For special cases
-            match prefix {
-                "NONE" => return page.encode_url(params),
-                "CAPS" => (), // Idk just as reminder
-                 _ => ()
+            if let Ok(url) = page.handle_special_prefix(command) {
+                return url;
             }
 
-            if !params.starts_with(prefix) {
+            if !command.params.starts_with(prefix) {
                 continue;
             }
 
-            let query = page.remove_prefix(params);
-            let url = page.encode_url(query);
-
-            return url;
+            command.remove_prefix(prefix);
+            return command.encode_url(&page.url);
         }
 
         // If no page was found, use the default one
