@@ -38,6 +38,8 @@ impl<'a> Command<'a> {
                 "{raw}" => clean = clean.replace(key, self.get_all_segments()),
                 "{0}" => clean = clean.replace(key, self.get_segment(0)),
                 "{1}" => clean = clean.replace(key, self.get_segment(1)),
+                "{2}" => clean = clean.replace(key, self.get_segment(2)),
+                "{3}" => clean = clean.replace(key, self.get_segment(3)),
                 _ => ()
             }
         }
