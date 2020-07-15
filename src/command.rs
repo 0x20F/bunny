@@ -1,4 +1,5 @@
 use key_list::KeyList;
+use crate::books::config::{Book, Page};
 
 
 
@@ -19,28 +20,25 @@ impl<'a> Command<'a> {
     }
 
 
-    pub fn encode_url_no_prefix(&mut self, url: &str, prefix: &str) -> String {
-        self.remove_prefix(prefix);
-        self.encode_url(url)
-    }
+    pub fn encode_url(&mut self, page: &Page, book: &Book) -> String {
+        let url = &page.url;
 
-
-    pub fn encode_url(&mut self, url: &str) -> String {
         let keys = KeyList::new(url, '{', '}');
         let mut clean = url.to_string();
 
         for key in keys {
-            match key {
-                "{encoded}" => clean = clean.replace(
+            clean = match key {
+                "{default}" => clean.replace(key, &book.get_default()),
+                "{encoded}" => clean.replace(
                     key,
                     crate::encoder::encode(self.get_all_segments()).as_ref()
                 ),
-                "{raw}" => clean = clean.replace(key, self.get_all_segments()),
-                "{0}" => clean = clean.replace(key, self.get_segment(0)),
-                "{1}" => clean = clean.replace(key, self.get_segment(1)),
-                "{2}" => clean = clean.replace(key, self.get_segment(2)),
-                "{3}" => clean = clean.replace(key, self.get_segment(3)),
-                _ => ()
+                "{raw}" => clean.replace(key, self.get_all_segments()),
+                "{0}" => clean.replace(key, self.get_segment(0)),
+                "{1}" => clean.replace(key, self.get_segment(1)),
+                "{2}" => clean.replace(key, self.get_segment(2)),
+                "{3}" => clean.replace(key, self.get_segment(3)),
+                _ => clean
             }
         }
 
@@ -48,9 +46,11 @@ impl<'a> Command<'a> {
     }
 
 
-    fn remove_prefix(&mut self, prefix: &str) {
+    pub fn remove_prefix(&mut self, prefix: &str) -> &mut Self {
         let prefix_length = prefix.len();
         self.params = &self.params[prefix_length..].trim();
+
+        self
     }
 
 
@@ -112,43 +112,6 @@ mod tests {
     fn test_params_get_parsed_correctly() {
         let command = command("tw extra-things");
         assert_eq!(command.params, "extra-things");
-    }
-
-
-
-    #[test]
-    fn test_url_encoding_with_prefix_removal() {
-        let mut command = command("tw -s extra things");
-        let url = "{0}";
-
-        assert_eq!(command.encode_url(url), "-s");
-        assert_eq!(command.encode_url_no_prefix(url, "-s"), "extra");
-    }
-
-
-
-    #[test]
-    fn test_url_encoding_encoded() {
-        let mut command = command("tw hello world");
-        let url = "{encoded}";
-
-        assert_eq!(command.encode_url(url), "hello%20world");
-    }
-
-    #[test]
-    fn test_url_encoding_raw() {
-        let mut command = command("tw hello world");
-        let url = "{raw}";
-
-        assert_eq!(command.encode_url(url), "hello world");
-    }
-
-    #[test]
-    fn test_url_encoding_with_indexes() {
-        let mut command = command("tw hello world");
-        let url = "{0}";
-
-        assert_eq!(command.encode_url(url), "hello");
     }
 
 

@@ -14,8 +14,8 @@ alias = "gh"
 default = "https://github.com"
 
 [github.pages]
-search = { prefix = "-s", url = "https://github.com/search?q={encoded}"}
-repo = { prefix = "NONE", url = "https://github.com/{raw}" }
+search = { prefix = "-s", url = "{default}/search?q={encoded}"}
+repo = { prefix = "NONE", url = "{default}/{raw}" }
 
 
 
@@ -25,5 +25,5 @@ alias = "rd"
 default = "https://reddit.com"
 
 [reddit.pages]
-whatever = { prefix = "NONE", url = "https://reddit.com/{0}/{1}" }
+whatever = { prefix = "NONE", url = "{default}/{0}/{1}" }
 search = { prefix = "-s", url = "https://reddit.com/search?q={encoded}" }

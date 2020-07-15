@@ -47,17 +47,18 @@ impl Library {
     pub fn get_page(&self, book: &Book, command: &mut Command) -> String {
         for page in book.pages.borrow().values() {
             let prefix = &page.prefix;
-            let url = &page.url;
 
             if !command.params.starts_with(prefix) {
                 if prefix == "NONE" {
-                    return command.encode_url(url);
+                    return command.encode_url(page, book);
                 }
 
                 continue;
             }
 
-            return command.encode_url_no_prefix(url, prefix);
+            return command
+                .remove_prefix(prefix)
+                .encode_url(page, book);
         }
 
         // If no page was found, use the default one
