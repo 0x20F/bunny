@@ -10,10 +10,9 @@ This was inspired by the following [article by facebook](https://developers.face
 
 
 ## How to use
-* Clone the repository (not on crates.io yet)
-* Build it
-* Run the server
-* Create a custom search engine for your browser and point it towards the server
+* `cargo install bun` (this does require rust nightly for now)
+* Run the installed program `bun` 
+* Create a custom search engine for your browser and point it towards the address the server is running on
 
 The server looks for a file that contains all the bookmarks inside the home directory (`~/bookmarks.toml`)
 
