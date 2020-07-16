@@ -154,7 +154,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "bunny"
+name = "bun"
 version = "0.1.0"
 dependencies = [
  "dirs",
