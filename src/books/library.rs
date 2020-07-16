@@ -1,7 +1,7 @@
 use std::fs;
 use std::borrow::Borrow;
 use std::collections::HashMap;
-use crate::books::config::Book;
+use crate::books::config::{Book, Page};
 use crate::command::Command;
 
 
@@ -45,20 +45,27 @@ impl Library {
 
 
     pub fn get_page(&self, book: &Book, command: &mut Command) -> String {
+        let mut none: Option<&Page> = None;
+
         for page in book.pages.borrow().values() {
             let prefix = &page.prefix;
 
-            if !command.params.starts_with(prefix) {
-                if prefix == "NONE" {
-                    return command.encode_url(page, book);
-                }
+            if prefix == "NONE" {
+                none = Some(page);
+                continue;
+            }
 
+            if !command.params.starts_with(prefix) {
                 continue;
             }
 
             return command
                 .remove_prefix(prefix)
                 .encode_url(page, book);
+        }
+
+        if let Some(page) = none {
+            return command.encode_url(page, book);
         }
 
         // If no page was found, use the default one
