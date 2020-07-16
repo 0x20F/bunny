@@ -10,10 +10,12 @@ repository = "https://github.com/0x20F/bunny"
 readme = "README.md"
 
 keywords = ["bookmarks", "tool", "toml", "rocket"]
-
 description = "Smart bookmarking tool, running custom commands to open urls from a browser url bar"
-
 license = "GPL-3.0-or-later"
+
+exclude = [
+	"example/*"
+]
 
 
 
