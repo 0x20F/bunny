@@ -4,7 +4,18 @@ version = "0.1.0"
 authors = ["0x20F <alexhexan22@gmail.com>"]
 edition = "2018"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+homepage = "https://github.com/0x20F/bunny"
+repository = "https://github.com/0x20F/bunny"
+readme = "README.md"
+
+keywords = ["bookmarks", "tool", "toml", "rocket"]
+
+description = "Smart bookmarking tool, running custom commands to open urls from a browser url bar"
+
+license = "GPL-3.0-or-later"
+
+
 
 [dependencies]
 dirs = "3"
